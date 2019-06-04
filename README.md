@@ -1,3 +1,9 @@
+Trivia game implementation example in PHP
+
+https://github.com/jbrains/trivia
+
+=============================
+
 Legacy Code Retreat code base
 ======
 
