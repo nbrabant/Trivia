@@ -2,6 +2,8 @@
 
 class Game
 {
+    const NB_CELLS = 12;
+
     private $players;
     private $places;
     private $purses;
@@ -12,14 +14,14 @@ class Game
 
     private $categories;
 
-    public function __construct()
+    public function __construct($categories)
     {
         $this->players = array();
         $this->places = array(0);
         $this->purses = array(0);
         $this->inPenaltyBox = array(0);
 
-        $this->categories = Category::initialize();
+        $this->categories = $categories;
     }
 
     function isPlayable()
@@ -54,8 +56,7 @@ class Game
                 $this->isGettingOutOfPenaltyBox = true;
 
                 $this->writeLine($this->getCurrentPlayer() . " is getting out of the penalty box");
-                $this->setCurrentPosition($this->getCurrentPosition() + $roll);
-                if ($this->getCurrentPosition() > 11) $this->setCurrentPosition($this->getCurrentPosition() - 12);
+                $this->movePlayer($roll);
 
                 $this->writeLine($this->getCurrentPlayer()
                     . "'s new location is "
@@ -66,11 +67,8 @@ class Game
                 $this->writeLine($this->getCurrentPlayer() . " is not getting out of the penalty box");
                 $this->isGettingOutOfPenaltyBox = false;
             }
-
         } else {
-
-            $this->setCurrentPosition($this->getCurrentPosition() + $roll);
-            if ($this->getCurrentPosition() > 11) $this->setCurrentPosition($this->getCurrentPosition() - 12);
+            $this->movePlayer($roll);
 
             $this->writeLine($this->getCurrentPlayer()
                 . "'s new location is "
@@ -78,7 +76,14 @@ class Game
             $this->writeLine("The category is " . $this->currentCategory());
             $this->askQuestion();
         }
+    }
 
+    private function movePlayer($roll)
+    {
+        $this->setCurrentPosition($this->getCurrentPosition() + $roll);
+        if ($this->getCurrentPosition() >= self::NB_CELLS) {
+            $this->setCurrentPosition($this->getCurrentPosition() - self::NB_CELLS);
+        }
     }
 
     private function askQuestion()

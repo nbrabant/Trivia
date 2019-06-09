@@ -12,10 +12,12 @@ class Category
     private $sportsQuestions = array();
     private $rockQuestions = array();
 
-    public static function initialize()
+    private $nbQuestions;
+
+    public function __construct($nbQuestions)
     {
-        $instance =  new self();
-        return $instance->initializeQuestions();
+        $this->nbQuestions = $nbQuestions;
+        $this->initializeQuestions();
     }
 
     public function getCategoryFromPosition($position)
@@ -51,10 +53,10 @@ class Category
     {
         return array_map(function ($index) use($category) {
             return $category . " Category " . $index;
-        }, range(1, 50));
+        }, range(1, $this->nbQuestions));
     }
 
-    private function getCategories()
+    public function getCategories()
     {
         return [
             self::POP['category'],

@@ -4,7 +4,9 @@ include __DIR__ . '/bootstrap/autoload.php';
 
 $notAWinner = true;
 
-$aGame = new Game();
+$aGame = new Game(
+    new Category(50)
+);
 
 $aGame->addPlayer("Chet");
 $aGame->addPlayer("Pat");
