@@ -8,7 +8,7 @@ class CategoryTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->instance = new Category(50);
+        $this->instance = new QuestionDeck(50);
     }
 
     /**
@@ -37,11 +37,11 @@ class CategoryTest extends TestCase
     {
         $question = $this->instance->getQuestion($category);
 
-        $this->assertEquals($category . ' Category 1', $question);
+        $this->assertEquals($category . ' QuestionDeck 1', $question);
 
         $question = $this->instance->getQuestion($category);
 
-        $this->assertEquals($category . ' Category 2', $question);
+        $this->assertEquals($category . ' QuestionDeck 2', $question);
     }
 
     public function positionProvider()

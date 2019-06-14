@@ -1,6 +1,6 @@
 <?php
 
-interface CategoryContract
+interface QuestionDeckContract
 {
     public function getCategoryFromPosition($position);
 

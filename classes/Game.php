@@ -12,16 +12,24 @@ class Game
     private $currentPlayer = 0;
     private $isGettingOutOfPenaltyBox;
 
-    private $categories;
+    /**
+     * @var QuestionDeckContract
+     */
+    private $questionDeck;
+    /**
+     * @var PlayerListContract
+     */
+    private $playerList;
 
-    public function __construct(CategoryContract $categories)
+    public function __construct(QuestionDeckContract $categories, PlayerListContract $playerList)
     {
         $this->players = array();
         $this->places = array(0);
         $this->purses = array(0);
         $this->inPenaltyBox = array(0);
 
-        $this->categories = $categories;
+        $this->questionDeck = $categories;
+        $this->playerList = $playerList;
     }
 
     function isPlayable()
@@ -88,12 +96,12 @@ class Game
 
     private function askQuestion()
     {
-        Console::writeLine($this->categories->getQuestion($this->currentCategory()));
+        Console::writeLine($this->questionDeck->getQuestion($this->currentCategory()));
     }
 
     private function currentCategory()
     {
-        return $this->categories->getCategoryFromPosition($this->getCurrentPosition());
+        return $this->questionDeck->getCategoryFromPosition($this->getCurrentPosition());
     }
 
     private function getCurrentPosition()
@@ -153,7 +161,7 @@ class Game
 
     public function wrongAnswer()
     {
-        Console::writeLine("Category was incorrectly answered");
+        Console::writeLine("QuestionDeck was incorrectly answered");
         Console::writeLine($this->getCurrentPlayer() . " was sent to the penalty box");
         $this->inPenaltyBox[$this->currentPlayer] = true;
 

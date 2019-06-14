@@ -1,6 +1,6 @@
 <?php
 
-class Category implements CategoryContract
+class QuestionDeck implements QuestionDeckContract
 {
     const POP = ['category' => 'Pop', 'places' => [0, 4, 8]];
     const SCIENCE = ['category' => 'Science', 'places' => [1, 5, 9]];
@@ -52,7 +52,7 @@ class Category implements CategoryContract
     private function createQuestions($category)
     {
         return array_map(function ($index) use($category) {
-            return $category . " Category " . $index;
+            return $category . " category " . $index;
         }, range(1, $this->nbQuestions));
     }
 

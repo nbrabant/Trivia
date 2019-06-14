@@ -5,7 +5,8 @@ include __DIR__ . '/bootstrap/autoload.php';
 $notAWinner = true;
 
 $aGame = new Game(
-    new Category(50)
+    new QuestionDeck(50),
+    new PlayerList(["Chet", "Pat", "Sue"])
 );
 
 $aGame->addPlayer("Chet");
