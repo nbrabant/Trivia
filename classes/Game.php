@@ -36,8 +36,8 @@ class Game
         $this->purses[$this->howManyPlayers()] = 0;
         $this->inPenaltyBox[$this->howManyPlayers()] = false;
 
-        $this->writeLine($playerName . " was added");
-        $this->writeLine("They are player number " . count($this->players));
+        Console::writeLine($playerName . " was added");
+        Console::writeLine("They are player number " . count($this->players));
         return true;
     }
 
@@ -48,32 +48,32 @@ class Game
 
     public function roll($roll)
     {
-        $this->writeLine($this->getCurrentPlayer() . " is the current player");
-        $this->writeLine("They have rolled a " . $roll);
+        Console::writeLine($this->getCurrentPlayer() . " is the current player");
+        Console::writeLine("They have rolled a " . $roll);
 
         if ($this->inPenaltyBox[$this->currentPlayer]) {
             if ($roll % 2 != 0) {
                 $this->isGettingOutOfPenaltyBox = true;
 
-                $this->writeLine($this->getCurrentPlayer() . " is getting out of the penalty box");
+                Console::writeLine($this->getCurrentPlayer() . " is getting out of the penalty box");
                 $this->movePlayer($roll);
 
-                $this->writeLine($this->getCurrentPlayer()
+                Console::writeLine($this->getCurrentPlayer()
                     . "'s new location is "
                     . $this->getCurrentPosition());
-                $this->writeLine("The category is " . $this->currentCategory());
+                Console::writeLine("The category is " . $this->currentCategory());
                 $this->askQuestion();
             } else {
-                $this->writeLine($this->getCurrentPlayer() . " is not getting out of the penalty box");
+                Console::writeLine($this->getCurrentPlayer() . " is not getting out of the penalty box");
                 $this->isGettingOutOfPenaltyBox = false;
             }
         } else {
             $this->movePlayer($roll);
 
-            $this->writeLine($this->getCurrentPlayer()
+            Console::writeLine($this->getCurrentPlayer()
                 . "'s new location is "
                 . $this->getCurrentPosition());
-            $this->writeLine("The category is " . $this->currentCategory());
+            Console::writeLine("The category is " . $this->currentCategory());
             $this->askQuestion();
         }
     }
@@ -88,7 +88,7 @@ class Game
 
     private function askQuestion()
     {
-        $this->writeLine($this->categories->getQuestion($this->currentCategory()));
+        Console::writeLine($this->categories->getQuestion($this->currentCategory()));
     }
 
     private function currentCategory()
@@ -115,9 +115,9 @@ class Game
     {
         if ($this->inPenaltyBox[$this->currentPlayer]) {
             if ($this->isGettingOutOfPenaltyBox) {
-                $this->writeLine("Answer was correct!!!!");
+                Console::writeLine("Answer was correct!!!!");
                 $this->purses[$this->currentPlayer]++;
-                $this->writeLine($this->getCurrentPlayer()
+                Console::writeLine($this->getCurrentPlayer()
                     . " now has "
                     . $this->purses[$this->currentPlayer]
                     . " Gold Coins.");
@@ -136,9 +136,9 @@ class Game
 
         } else {
 
-            $this->writeLine("Answer was corrent!!!!");
+            Console::writeLine("Answer was corrent!!!!");
             $this->purses[$this->currentPlayer]++;
-            $this->writeLine($this->getCurrentPlayer()
+            Console::writeLine($this->getCurrentPlayer()
                 . " now has "
                 . $this->purses[$this->currentPlayer]
                 . " Gold Coins.");
@@ -153,8 +153,8 @@ class Game
 
     public function wrongAnswer()
     {
-        $this->writeLine("Category was incorrectly answered");
-        $this->writeLine($this->getCurrentPlayer() . " was sent to the penalty box");
+        Console::writeLine("Category was incorrectly answered");
+        Console::writeLine($this->getCurrentPlayer() . " was sent to the penalty box");
         $this->inPenaltyBox[$this->currentPlayer] = true;
 
         $this->currentPlayer++;
@@ -168,8 +168,4 @@ class Game
         return !($this->purses[$this->currentPlayer] == 6);
     }
 
-    private function writeLine($line)
-    {
-        echo $line . "\n";
-    }
 }
