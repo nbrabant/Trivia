@@ -14,7 +14,7 @@ class Game
 
     private $categories;
 
-    public function __construct($categories)
+    public function __construct(CategoryContract $categories)
     {
         $this->players = array();
         $this->places = array(0);

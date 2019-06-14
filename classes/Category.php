@@ -1,6 +1,6 @@
 <?php
 
-class Category
+class Category implements CategoryContract
 {
     const POP = ['category' => 'Pop', 'places' => [0, 4, 8]];
     const SCIENCE = ['category' => 'Science', 'places' => [1, 5, 9]];
@@ -56,7 +56,7 @@ class Category
         }, range(1, $this->nbQuestions));
     }
 
-    public function getCategories()
+    private function getCategories()
     {
         return [
             self::POP['category'],
