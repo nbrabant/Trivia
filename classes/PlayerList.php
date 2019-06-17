@@ -2,7 +2,9 @@
 
 class PlayerList implements PlayerListContract
 {
-    private $players;
+    private $players = array();
+
+    private $currentPlayer = 0;
 
     public function __construct($players)
     {
@@ -13,12 +15,7 @@ class PlayerList implements PlayerListContract
 
     private function addPlayer($playerName)
     {
-        array_push($this->players, [
-            'name' => $playerName,
-            'places' => [],
-            'purses' => [],
-            'inPenaltyBox' => false,
-        ]);
+        array_push($this->players, new Player($playerName));
 
         Console::writeLine($playerName . " was added");
         Console::writeLine("They are player number " . $this->howManyPlayers());
@@ -30,11 +27,17 @@ class PlayerList implements PlayerListContract
         return count($this->players);
     }
 
-    private function movePlayer($roll)
+    public function nextPlayerTurn()
     {
-//        $this->setCurrentPosition($this->getCurrentPosition() + $roll);
-//        if ($this->getCurrentPosition() >= self::NB_CELLS) {
-//            $this->setCurrentPosition($this->getCurrentPosition() - self::NB_CELLS);
-//        }
+        $this->currentPlayer++;
+        if ($this->currentPlayer == count($this->players)) $this->currentPlayer = 0;
+    }
+
+    /**
+     * @return PlayerContract $player
+     */
+    public function getCurrentPlayer(): PlayerContract
+    {
+        return $this->players[$this->currentPlayer];
     }
 }

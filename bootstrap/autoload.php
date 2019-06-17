@@ -8,3 +8,5 @@ require __DIR__ . '/../classes/contracts/QuestionDeckContract.php';
 require __DIR__ . '/../classes/QuestionDeck.php';
 require __DIR__ . '/../classes/contracts/PlayerListContract.php';
 require __DIR__ . '/../classes/PlayerList.php';
+require __DIR__ . '/../classes/contracts/PlayerContract.php';
+require __DIR__ . '/../classes/Player.php';

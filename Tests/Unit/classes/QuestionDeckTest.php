@@ -2,7 +2,7 @@
 
 use \PHPUnit\Framework\TestCase;
 
-class CategoryTest extends TestCase
+class QuestionDeckTest extends TestCase
 {
     private $instance;
 
@@ -37,11 +37,11 @@ class CategoryTest extends TestCase
     {
         $question = $this->instance->getQuestion($category);
 
-        $this->assertEquals($category . ' QuestionDeck 1', $question);
+        $this->assertEquals($category . ' category 1', $question);
 
         $question = $this->instance->getQuestion($category);
 
-        $this->assertEquals($category . ' QuestionDeck 2', $question);
+        $this->assertEquals($category . ' category 2', $question);
     }
 
     public function positionProvider()

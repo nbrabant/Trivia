@@ -9,10 +9,6 @@ $aGame = new Game(
     new PlayerList(["Chet", "Pat", "Sue"])
 );
 
-$aGame->addPlayer("Chet");
-$aGame->addPlayer("Pat");
-$aGame->addPlayer("Sue");
-
 do {
     $aGame->roll(rand(0, 5) + 1);
 

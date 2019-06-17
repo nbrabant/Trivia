@@ -2,14 +2,6 @@
 
 class Game
 {
-    const NB_CELLS = 12;
-
-    private $players;
-    private $places;
-    private $purses;
-    private $inPenaltyBox;
-
-    private $currentPlayer = 0;
     private $isGettingOutOfPenaltyBox;
 
     /**
@@ -21,76 +13,54 @@ class Game
      */
     private $playerList;
 
-    public function __construct(QuestionDeckContract $categories, PlayerListContract $playerList)
-    {
-        $this->players = array();
-        $this->places = array(0);
-        $this->purses = array(0);
-        $this->inPenaltyBox = array(0);
-
+    public function __construct(
+        QuestionDeckContract $categories,
+        PlayerListContract $playerList
+    ) {
         $this->questionDeck = $categories;
         $this->playerList = $playerList;
     }
 
     function isPlayable()
     {
-        return ($this->howManyPlayers() >= 2);
-    }
-
-    public function addPlayer($playerName)
-    {
-        array_push($this->players, $playerName);
-        $this->places[$this->howManyPlayers()] = 0;
-        $this->purses[$this->howManyPlayers()] = 0;
-        $this->inPenaltyBox[$this->howManyPlayers()] = false;
-
-        Console::writeLine($playerName . " was added");
-        Console::writeLine("They are player number " . count($this->players));
-        return true;
-    }
-
-    private function howManyPlayers()
-    {
-        return count($this->players);
+        return ($this->playerList->howManyPlayers() >= 2);
     }
 
     public function roll($roll)
     {
-        Console::writeLine($this->getCurrentPlayer() . " is the current player");
+        Console::writeLine(
+            $this->playerList->getCurrentPlayer()->formatMessage(PlayerContract::CURRENT_PLAYER_MSG)
+        );
         Console::writeLine("They have rolled a " . $roll);
 
-        if ($this->inPenaltyBox[$this->currentPlayer]) {
+        if ($this->playerList->getCurrentPlayer()->isPenalised()) {
             if ($roll % 2 != 0) {
-                $this->isGettingOutOfPenaltyBox = true;
+                $this->playerList->getCurrentPlayer()->penalise(false);
 
-                Console::writeLine($this->getCurrentPlayer() . " is getting out of the penalty box");
-                $this->movePlayer($roll);
+                Console::writeLine(
+                    $this->playerList->getCurrentPlayer()->formatMessage(PlayerContract::GET_OUT_PENALTY_MSG)
+                );
+                $this->playerList->getCurrentPlayer()->move($roll);
 
-                Console::writeLine($this->getCurrentPlayer()
-                    . "'s new location is "
-                    . $this->getCurrentPosition());
+                Console::writeLine(
+                    $this->playerList->getCurrentPlayer()->formatMessage(PlayerContract::LOCATION_MSG)
+                );
                 Console::writeLine("The category is " . $this->currentCategory());
                 $this->askQuestion();
             } else {
-                Console::writeLine($this->getCurrentPlayer() . " is not getting out of the penalty box");
+                Console::writeLine(
+                    $this->playerList->getCurrentPlayer()->formatMessage(PlayerContract::GET_OUT_PENALTY_MSG)
+                );
                 $this->isGettingOutOfPenaltyBox = false;
             }
         } else {
-            $this->movePlayer($roll);
+            $this->playerList->getCurrentPlayer()->move($roll);
 
-            Console::writeLine($this->getCurrentPlayer()
-                . "'s new location is "
-                . $this->getCurrentPosition());
+            Console::writeLine(
+                $this->playerList->getCurrentPlayer()->formatMessage(PlayerContract::LOCATION_MSG)
+            );
             Console::writeLine("The category is " . $this->currentCategory());
             $this->askQuestion();
-        }
-    }
-
-    private function movePlayer($roll)
-    {
-        $this->setCurrentPosition($this->getCurrentPosition() + $roll);
-        if ($this->getCurrentPosition() >= self::NB_CELLS) {
-            $this->setCurrentPosition($this->getCurrentPosition() - self::NB_CELLS);
         }
     }
 
@@ -101,59 +71,41 @@ class Game
 
     private function currentCategory()
     {
-        return $this->questionDeck->getCategoryFromPosition($this->getCurrentPosition());
-    }
-
-    private function getCurrentPosition()
-    {
-        return $this->places[$this->currentPlayer];
-    }
-
-    private function setCurrentPosition($position)
-    {
-        $this->places[$this->currentPlayer] = $position;
-    }
-
-    private function getCurrentPlayer()
-    {
-        return $this->players[$this->currentPlayer];
+        return $this->questionDeck->getCategoryFromPosition(
+            $this->playerList->getCurrentPlayer()->getPosition()
+        );
     }
 
     public function wasCorrectlyAnswered()
     {
-        if ($this->inPenaltyBox[$this->currentPlayer]) {
+        if ($this->playerList->getCurrentPlayer()->isPenalised()) {
             if ($this->isGettingOutOfPenaltyBox) {
                 Console::writeLine("Answer was correct!!!!");
-                $this->purses[$this->currentPlayer]++;
-                Console::writeLine($this->getCurrentPlayer()
-                    . " now has "
-                    . $this->purses[$this->currentPlayer]
-                    . " Gold Coins.");
+                $this->playerList->getCurrentPlayer()->incrementPurses();
+                Console::writeLine(
+                    $this->playerList->getCurrentPlayer()->formatMessage(PlayerContract::PURSE_MSG)
+                );
 
-                $winner = $this->didPlayerWin();
-                $this->currentPlayer++;
-                if ($this->currentPlayer == count($this->players)) $this->currentPlayer = 0;
+                $winner = $this->playerList->getCurrentPlayer()->hasNotWinGame();
+                $this->playerList->nextPlayerTurn();
 
                 return $winner;
             } else {
-                $this->currentPlayer++;
-                if ($this->currentPlayer == count($this->players)) $this->currentPlayer = 0;
+                $this->playerList->nextPlayerTurn();
                 return true;
             }
 
 
         } else {
 
-            Console::writeLine("Answer was corrent!!!!");
-            $this->purses[$this->currentPlayer]++;
-            Console::writeLine($this->getCurrentPlayer()
-                . " now has "
-                . $this->purses[$this->currentPlayer]
-                . " Gold Coins.");
+            Console::writeLine("Answer was correct!!!!");
+            $this->playerList->getCurrentPlayer()->incrementPurses();
+            Console::writeLine(
+                $this->playerList->getCurrentPlayer()->formatMessage(PlayerContract::PURSE_MSG)
+            );
 
-            $winner = $this->didPlayerWin();
-            $this->currentPlayer++;
-            if ($this->currentPlayer == count($this->players)) $this->currentPlayer = 0;
+            $winner = $this->playerList->getCurrentPlayer()->hasNotWinGame();
+            $this->playerList->nextPlayerTurn();
 
             return $winner;
         }
@@ -162,18 +114,13 @@ class Game
     public function wrongAnswer()
     {
         Console::writeLine("QuestionDeck was incorrectly answered");
-        Console::writeLine($this->getCurrentPlayer() . " was sent to the penalty box");
-        $this->inPenaltyBox[$this->currentPlayer] = true;
+        Console::writeLine(
+            $this->playerList->getCurrentPlayer()->formatMessage(PlayerContract::SEND_TO_PENALTY_MSG)
+        );
+        $this->playerList->getCurrentPlayer()->penalise(true);
 
-        $this->currentPlayer++;
-        if ($this->currentPlayer == count($this->players)) $this->currentPlayer = 0;
+        $this->playerList->nextPlayerTurn();
         return true;
-    }
-
-
-    private function didPlayerWin()
-    {
-        return !($this->purses[$this->currentPlayer] == 6);
     }
 
 }
