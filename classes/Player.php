@@ -10,6 +10,11 @@ class Player implements PlayerContract
 
     private $inPenaltyBox = false;
 
+    public function __toString(): string
+    {
+        return $this->name;
+    }
+
     public function __construct($name)
     {
         $this->name = $name;

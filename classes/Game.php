@@ -66,7 +66,9 @@ class Game
 
     private function askQuestion()
     {
-        Console::writeLine($this->questionDeck->getQuestion($this->currentCategory()));
+        Console::writeLine(
+            $this->questionDeck->getQuestion($this->currentCategory())
+        );
     }
 
     private function currentCategory()
@@ -90,11 +92,7 @@ class Game
                 $this->playerList->nextPlayerTurn();
 
                 return $winner;
-            } else {
-                $this->playerList->nextPlayerTurn();
-                return true;
             }
-
 
         } else {
 
@@ -109,6 +107,9 @@ class Game
 
             return $winner;
         }
+
+        $this->playerList->nextPlayerTurn();
+        return true;
     }
 
     public function wrongAnswer()
