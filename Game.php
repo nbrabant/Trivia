@@ -114,16 +114,14 @@ class Game
 	public function wasCorrectlyAnswered(): bool
 	{
 		if ($this->inPenaltyBox[$this->currentPlayer] && !$this->isGettingOutOfPenaltyBox) {
-			$this->currentPlayer++;
-			if ($this->currentPlayer == count($this->players)) $this->currentPlayer = 0;
+			$this->nextPlayerTurn();
 			return false;
 		}
 
 		$this->giveCoinToPlayer();
 
 		$winner = $this->didPlayerWin();
-		$this->currentPlayer++;
-		if ($this->currentPlayer == count($this->players)) $this->currentPlayer = 0;
+		$this->nextPlayerTurn();
 
 		return $winner;
 	}
@@ -134,9 +132,19 @@ class Game
 		echoln($this->players[$this->currentPlayer] . " was sent to the penalty box");
 		$this->inPenaltyBox[$this->currentPlayer] = true;
 
+		$this->nextPlayerTurn();
+		return false;
+	}
+
+	/**
+	 * Next player turn
+	 *
+	 * @return void
+	 */
+	private function nextPlayerTurn(): void
+	{
 		$this->currentPlayer++;
 		if ($this->currentPlayer == count($this->players)) $this->currentPlayer = 0;
-		return false;
 	}
 
 	/**
