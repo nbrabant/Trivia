@@ -2,11 +2,9 @@
 
 require 'bootstrap/autoload.php';
 
-use App\Game;
-
 $winTheGame;
 
-  $aGame = new Game();
+$aGame = $container->get(\App\Game::class);
   
   $aGame->add("Chet");
   $aGame->add("Pat");

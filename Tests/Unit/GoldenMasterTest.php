@@ -17,7 +17,9 @@ class GoldenMaster extends TestCase
 
 	public function setUp(): void
 	{
-		$this->game = new Game();
+        $logger = $this->createMock(\Psr\Log\LoggerInterface::class);
+
+		$this->game = new Game($logger);
 	}
 
 	public function testShouldInitializeANewPlayerWhenAddPlayer()

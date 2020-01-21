@@ -2,9 +2,7 @@
 
 namespace App;
 
-function echoln($string) {
-  echo $string."\n";
-}
+use Psr\Log\LoggerInterface;
 
 class Game 
 {
@@ -24,16 +22,19 @@ class Game
     private $rockQuestions = array();
 
     public $currentPlayer = 0;
-    public $isGettingOutOfPenaltyBox;
+	public $isGettingOutOfPenaltyBox;
+	
+	private $logger;
 
-	public function  __construct()
+	public function  __construct(LoggerInterface $logger)
 	{
         for ($i = 0; $i < 50; $i++) {
 			array_push($this->popQuestions, $this->createQuestion(self::CATEGORY_POP, $i));
 			array_push($this->scienceQuestions, $this->createQuestion(self::CATEGORY_SCIENCE, $i));
 			array_push($this->sportsQuestions, $this->createQuestion(self::CATEGORY_SPORT, $i));
 			array_push($this->rockQuestions, $this->createQuestion(self::CATEGORY_ROCK, $i));
-    	}
+		}
+		$this->logger = $logger;
     }
 
 	/**
@@ -60,8 +61,8 @@ class Game
 	   	$this->purses[$this->howManyPlayers()] = 0;
 	   	$this->inPenaltyBox[$this->howManyPlayers()] = false;
 
-	    echoln($playerName . " was added");
-	    echoln("They are player number " . count($this->players));
+	    $this->logger->info($playerName . " was added");
+	    $this->logger->info("They are player number " . count($this->players));
 		return true;
 	}
 
@@ -72,28 +73,28 @@ class Game
 
 	public function roll($roll) 
 	{
-		echoln($this->players[$this->currentPlayer] . " is the current player");
-		echoln("They have rolled a " . $roll);
+		$this->logger->info($this->players[$this->currentPlayer] . " is the current player");
+		$this->logger->info("They have rolled a " . $roll);
 
 		if ($this->inPenaltyBox[$this->currentPlayer] && !$this->tryToGetOutOfPenaltyBox($roll)) {
 			return;
 		}
 
 		$this->movePlayer($roll);
-		echoln("The category is " . $this->currentCategory());
+		$this->logger->info("The category is " . $this->currentCategory());
 		$this->askQuestion();
 	}
 
 	private function askQuestion() 
 	{
 		if ($this->currentCategory() == self::CATEGORY_POP)
-			echoln(array_shift($this->popQuestions));
+			$this->logger->info(array_shift($this->popQuestions));
 		if ($this->currentCategory() == self::CATEGORY_SCIENCE)
-			echoln(array_shift($this->scienceQuestions));
+			$this->logger->info(array_shift($this->scienceQuestions));
 		if ($this->currentCategory() == self::CATEGORY_SPORT)
-			echoln(array_shift($this->sportsQuestions));
+			$this->logger->info(array_shift($this->sportsQuestions));
 		if ($this->currentCategory() == self::CATEGORY_ROCK)
-			echoln(array_shift($this->rockQuestions));
+			$this->logger->info(array_shift($this->rockQuestions));
 	}
 
 	private function currentCategory() 
@@ -130,8 +131,8 @@ class Game
 
 	public function wrongAnswer(): bool
 	{
-		echoln("Question was incorrectly answered");
-		echoln($this->players[$this->currentPlayer] . " was sent to the penalty box");
+		$this->logger->info("Question was incorrectly answered");
+		$this->logger->info($this->players[$this->currentPlayer] . " was sent to the penalty box");
 		$this->inPenaltyBox[$this->currentPlayer] = true;
 
 		$this->nextPlayerTurn();
@@ -170,7 +171,7 @@ class Game
 		$this->places[$this->currentPlayer] = $this->places[$this->currentPlayer] + $roll;
 		if ($this->places[$this->currentPlayer] > 11) $this->places[$this->currentPlayer] = $this->places[$this->currentPlayer] - 12;
 
-		echoln($this->players[$this->currentPlayer]
+		$this->logger->info($this->players[$this->currentPlayer]
 				. "'s new location is "
 				.$this->places[$this->currentPlayer]);
 	}
@@ -185,12 +186,12 @@ class Game
 	{
 		if ($roll % 2 != 0) {
 			$this->isGettingOutOfPenaltyBox = true;
-			echoln($this->players[$this->currentPlayer] . " is getting out of the penalty box");
+			$this->logger->info($this->players[$this->currentPlayer] . " is getting out of the penalty box");
 			return true;
 		}
 		
 		$this->isGettingOutOfPenaltyBox = false;
-		echoln($this->players[$this->currentPlayer] . " is not getting out of the penalty box");
+		$this->logger->info($this->players[$this->currentPlayer] . " is not getting out of the penalty box");
 		return false;
 	}
 
@@ -201,9 +202,9 @@ class Game
 	 */
 	private function giveCoinToPlayer(): void
 	{
-		echoln("Answer was correct!!!!");
+		$this->logger->info("Answer was correct!!!!");
 		$this->purses[$this->currentPlayer]++;
-		echoln($this->players[$this->currentPlayer]
+		$this->logger->info($this->players[$this->currentPlayer]
 				. " now has "
 				.$this->purses[$this->currentPlayer]
 				. " Gold Coins.");
