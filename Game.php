@@ -6,6 +6,11 @@ function echoln($string) {
 
 class Game 
 {
+	const CATEGORY_POP = "Pop";
+	const CATEGORY_SCIENCE = "Science";
+	const CATEGORY_SPORT = "Sports";
+	const CATEGORY_ROCK = "Rock";
+
     public $players = array();
     public $places = array(0);
     public $purses = array(0);
@@ -66,7 +71,7 @@ class Game
 				$this->isGettingOutOfPenaltyBox = true;
 
 				echoln($this->players[$this->currentPlayer] . " is getting out of the penalty box");
-			$this->places[$this->currentPlayer] = $this->places[$this->currentPlayer] + $roll;
+				$this->places[$this->currentPlayer] = $this->places[$this->currentPlayer] + $roll;
 				if ($this->places[$this->currentPlayer] > 11) $this->places[$this->currentPlayer] = $this->places[$this->currentPlayer] - 12;
 
 				echoln($this->players[$this->currentPlayer]
@@ -77,13 +82,13 @@ class Game
 			} else {
 				echoln($this->players[$this->currentPlayer] . " is not getting out of the penalty box");
 				$this->isGettingOutOfPenaltyBox = false;
-				}
+			}
 
 		} else {
 
-		$this->places[$this->currentPlayer] = $this->places[$this->currentPlayer] + $roll;
+			$this->places[$this->currentPlayer] = $this->places[$this->currentPlayer] + $roll;
 
-		if ($this->places[$this->currentPlayer] > 11) $this->places[$this->currentPlayer] = $this->places[$this->currentPlayer] - 12;
+			if ($this->places[$this->currentPlayer] > 11) $this->places[$this->currentPlayer] = $this->places[$this->currentPlayer] - 12;
 			echoln($this->players[$this->currentPlayer]
 					. "'s new location is "
 					.$this->places[$this->currentPlayer]);
@@ -95,28 +100,31 @@ class Game
 
 	private function askQuestion() 
 	{
-		if ($this->currentCategory() == "Pop")
+		if ($this->currentCategory() == self::CATEGORY_POP)
 			echoln(array_shift($this->popQuestions));
-		if ($this->currentCategory() == "Science")
+		if ($this->currentCategory() == self::CATEGORY_SCIENCE)
 			echoln(array_shift($this->scienceQuestions));
-		if ($this->currentCategory() == "Sports")
+		if ($this->currentCategory() == self::CATEGORY_SPORT)
 			echoln(array_shift($this->sportsQuestions));
-		if ($this->currentCategory() == "Rock")
+		if ($this->currentCategory() == self::CATEGORY_ROCK)
 			echoln(array_shift($this->rockQuestions));
 	}
 
 	private function currentCategory() 
 	{
-		if ($this->places[$this->currentPlayer] == 0) return "Pop";
-		if ($this->places[$this->currentPlayer] == 4) return "Pop";
-		if ($this->places[$this->currentPlayer] == 8) return "Pop";
-		if ($this->places[$this->currentPlayer] == 1) return "Science";
-		if ($this->places[$this->currentPlayer] == 5) return "Science";
-		if ($this->places[$this->currentPlayer] == 9) return "Science";
-		if ($this->places[$this->currentPlayer] == 2) return "Sports";
-		if ($this->places[$this->currentPlayer] == 6) return "Sports";
-		if ($this->places[$this->currentPlayer] == 10) return "Sports";
-		return "Rock";
+		if (in_array($this->places[$this->currentPlayer], [0, 4, 8])) {
+			return self::CATEGORY_POP;
+		}
+
+		if (in_array($this->places[$this->currentPlayer], [1, 5, 9])) {
+			return self::CATEGORY_SCIENCE;
+		}
+
+		if (in_array($this->places[$this->currentPlayer], [2, 6, 10])) {
+			return self::CATEGORY_SPORT;
+		}
+
+		return self::CATEGORY_ROCK;
 	}
 
 	public function wasCorrectlyAnswered() 
@@ -140,8 +148,6 @@ class Game
 				if ($this->currentPlayer == count($this->players)) $this->currentPlayer = 0;
 				return true;
 			}
-
-
 
 		} else {
 
