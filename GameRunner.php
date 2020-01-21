@@ -1,6 +1,8 @@
 <?php
 
-include __DIR__.'/Game.php';
+require 'bootstrap/autoload.php';
+
+use App\Game;
 
 $winTheGame;
 

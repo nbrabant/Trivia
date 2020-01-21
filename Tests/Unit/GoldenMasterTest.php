@@ -2,8 +2,7 @@
 
 namespace Test\Unit;
 
-include __DIR__ . '/../../Game.php';
-
+use App\Game;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -18,7 +17,7 @@ class GoldenMaster extends TestCase
 
 	public function setUp(): void
 	{
-		$this->game = new \Game();
+		$this->game = new Game();
 	}
 
 	public function testShouldInitializeANewPlayerWhenAddPlayer()
