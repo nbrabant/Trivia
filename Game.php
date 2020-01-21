@@ -113,34 +113,13 @@ class Game
 
 	public function wasCorrectlyAnswered() 
 	{
-		if ($this->inPenaltyBox[$this->currentPlayer]) {
-			if ($this->isGettingOutOfPenaltyBox) {
-				echoln("Answer was correct!!!!");
-				$this->purses[$this->currentPlayer]++;
-				echoln($this->players[$this->currentPlayer]
-						. " now has "
-						.$this->purses[$this->currentPlayer]
-						. " Gold Coins.");
-
-				$winner = $this->didPlayerWin();
-				$this->currentPlayer++;
-				if ($this->currentPlayer == count($this->players)) $this->currentPlayer = 0;
-
-				return $winner;
-			}
-
+		if ($this->inPenaltyBox[$this->currentPlayer] && !$this->isGettingOutOfPenaltyBox) {
 			$this->currentPlayer++;
 			if ($this->currentPlayer == count($this->players)) $this->currentPlayer = 0;
 			return true;
-
 		}
 
-		echoln("Answer was corrent!!!!");
-		$this->purses[$this->currentPlayer]++;
-		echoln($this->players[$this->currentPlayer]
-				. " now has "
-				.$this->purses[$this->currentPlayer]
-				. " Gold Coins.");
+		$this->giveCoinToPlayer();
 
 		$winner = $this->didPlayerWin();
 		$this->currentPlayer++;
@@ -198,5 +177,20 @@ class Game
 		$this->isGettingOutOfPenaltyBox = false;
 		echoln($this->players[$this->currentPlayer] . " is not getting out of the penalty box");
 		return false;
+	}
+
+	/**
+	 * Give a coin to the current player
+	 *
+	 * @return void
+	 */
+	private function giveCoinToPlayer(): void
+	{
+		echoln("Answer was correct!!!!");
+		$this->purses[$this->currentPlayer]++;
+		echoln($this->players[$this->currentPlayer]
+				. " now has "
+				.$this->purses[$this->currentPlayer]
+				. " Gold Coins.");
 	}
 }
