@@ -2,52 +2,35 @@
 
 namespace App;
 
+use App\Contracts\QuestionsDeckInterface;
 use Psr\Log\LoggerInterface;
 
 class Game 
 {
-	const CATEGORY_POP = "Pop";
-	const CATEGORY_SCIENCE = "Science";
-	const CATEGORY_SPORT = "Sports";
-	const CATEGORY_ROCK = "Rock";
-
-    public $players = array();
+	public $players = array();
     public $places = array(0);
     public $purses = array(0);
     public $inPenaltyBox = array(0);
 
-    private $popQuestions = array();
-    private $scienceQuestions = array();
-    private $sportsQuestions = array();
-    private $rockQuestions = array();
-
     public $currentPlayer = 0;
 	public $isGettingOutOfPenaltyBox;
 	
+	/**
+	 * @var QuestionsDeckInterface $questionsDeck
+	 */
+	private $questionsDeck;
+	/**
+	 * @var Psr\Log\LoggerInterface $logger
+	 */
 	private $logger;
 
-	public function  __construct(LoggerInterface $logger)
-	{
-        for ($i = 0; $i < 50; $i++) {
-			array_push($this->popQuestions, $this->createQuestion(self::CATEGORY_POP, $i));
-			array_push($this->scienceQuestions, $this->createQuestion(self::CATEGORY_SCIENCE, $i));
-			array_push($this->sportsQuestions, $this->createQuestion(self::CATEGORY_SPORT, $i));
-			array_push($this->rockQuestions, $this->createQuestion(self::CATEGORY_ROCK, $i));
-		}
+	public function  __construct(
+		QuestionsDeckInterface $questionsDeck,
+		LoggerInterface $logger
+	) { 
+		$this->questionsDeck = $questionsDeck->buildDeck();
 		$this->logger = $logger;
     }
-
-	/**
-	 * Create and return question
-	 *
-	 * @param string $type
-	 * @param int $index
-	 * @return string
-	 */
-	private function createQuestion(string $type, int $index): string
-	{
-		return $type . " Question " . $index;
-	}
 
 	private function isPlayable(): boolean
 	{
@@ -81,37 +64,20 @@ class Game
 		}
 
 		$this->movePlayer($roll);
-		$this->logger->info("The category is " . $this->currentCategory());
+
 		$this->askQuestion();
 	}
 
 	private function askQuestion() 
 	{
-		if ($this->currentCategory() == self::CATEGORY_POP)
-			$this->logger->info(array_shift($this->popQuestions));
-		if ($this->currentCategory() == self::CATEGORY_SCIENCE)
-			$this->logger->info(array_shift($this->scienceQuestions));
-		if ($this->currentCategory() == self::CATEGORY_SPORT)
-			$this->logger->info(array_shift($this->sportsQuestions));
-		if ($this->currentCategory() == self::CATEGORY_ROCK)
-			$this->logger->info(array_shift($this->rockQuestions));
-	}
-
-	private function currentCategory() 
-	{
-		if (in_array($this->places[$this->currentPlayer], [0, 4, 8])) {
-			return self::CATEGORY_POP;
-		}
-
-		if (in_array($this->places[$this->currentPlayer], [1, 5, 9])) {
-			return self::CATEGORY_SCIENCE;
-		}
-
-		if (in_array($this->places[$this->currentPlayer], [2, 6, 10])) {
-			return self::CATEGORY_SPORT;
-		}
-
-		return self::CATEGORY_ROCK;
+		$this->logger->info("The category is " . $this->questionsDeck->getCategory(
+			$this->places[$this->currentPlayer]
+		));
+		$this->logger->info(
+			$this->questionsDeck->getQuestionFromCategory(
+				$this->places[$this->currentPlayer]
+			)
+		);
 	}
 
 	public function wasCorrectlyAnswered(): bool

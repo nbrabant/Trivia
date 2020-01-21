@@ -3,6 +3,8 @@
 namespace Test\Unit;
 
 use App\Game;
+use App\Contracts\QuestionsDeckInterface;
+use Psr\Log\LoggerInterface;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -17,9 +19,10 @@ class GoldenMaster extends TestCase
 
 	public function setUp(): void
 	{
-        $logger = $this->createMock(\Psr\Log\LoggerInterface::class);
-
-		$this->game = new Game($logger);
+        $this->game = new Game(
+            $this->createMock(QuestionsDeckInterface::class),
+            $this->createMock(LoggerInterface::class)
+        );
 	}
 
 	public function testShouldInitializeANewPlayerWhenAddPlayer()
