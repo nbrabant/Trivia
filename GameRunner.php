@@ -2,7 +2,7 @@
 
 include __DIR__.'/Game.php';
 
-$notAWinner;
+$winTheGame;
 
   $aGame = new Game();
   
@@ -16,12 +16,12 @@ $notAWinner;
     $aGame->roll(rand(0,5) + 1);
     
     if (rand(0,9) == 7) {
-      $notAWinner = $aGame->wrongAnswer();
+      $winTheGame = $aGame->wrongAnswer();
     } else {
-      $notAWinner = $aGame->wasCorrectlyAnswered();
+      $winTheGame = $aGame->wasCorrectlyAnswered();
     }
     
     
     
-  } while ($notAWinner);
+  } while (!$winTheGame);
   

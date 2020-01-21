@@ -111,12 +111,12 @@ class Game
 		return self::CATEGORY_ROCK;
 	}
 
-	public function wasCorrectlyAnswered() 
+	public function wasCorrectlyAnswered(): bool
 	{
 		if ($this->inPenaltyBox[$this->currentPlayer] && !$this->isGettingOutOfPenaltyBox) {
 			$this->currentPlayer++;
 			if ($this->currentPlayer == count($this->players)) $this->currentPlayer = 0;
-			return true;
+			return false;
 		}
 
 		$this->giveCoinToPlayer();
@@ -128,7 +128,7 @@ class Game
 		return $winner;
 	}
 
-	public function wrongAnswer()
+	public function wrongAnswer(): bool
 	{
 		echoln("Question was incorrectly answered");
 		echoln($this->players[$this->currentPlayer] . " was sent to the penalty box");
@@ -136,12 +136,17 @@ class Game
 
 		$this->currentPlayer++;
 		if ($this->currentPlayer == count($this->players)) $this->currentPlayer = 0;
-		return true;
+		return false;
 	}
 
-	private function didPlayerWin() 
+	/**
+	 * Check if current player earn enough coins to win 
+	 *
+	 * @return boolean
+	 */
+	private function didPlayerWin(): bool
 	{
-		return !($this->purses[$this->currentPlayer] == 6);
+		return ($this->purses[$this->currentPlayer] >= 6);
 	}
 
 	/**

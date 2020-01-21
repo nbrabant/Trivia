@@ -91,7 +91,7 @@ class GoldenMaster extends TestCase
         $this->game->add('toto');
         $this->game->roll(5);
 
-        self::assertTrue($this->game->wasCorrectlyAnswered());
+        self::assertFalse($this->game->wasCorrectlyAnswered());
     }
 
     public function testShouldWinTheGameForACorrectAnswerWhenPlayerHasEnoughPoints()
@@ -100,7 +100,7 @@ class GoldenMaster extends TestCase
         $this->game->purses[0] = 5;
         $this->game->roll(5);
 
-        self::assertFalse($this->game->wasCorrectlyAnswered());
+        self::assertTrue($this->game->wasCorrectlyAnswered());
     }
 
     public function testSouldGoToThePenalityBoxWhenPlayerHasNotCorrectlyAnswered()
