@@ -71,12 +71,7 @@ class Game
 				$this->isGettingOutOfPenaltyBox = true;
 
 				echoln($this->players[$this->currentPlayer] . " is getting out of the penalty box");
-				$this->places[$this->currentPlayer] = $this->places[$this->currentPlayer] + $roll;
-				if ($this->places[$this->currentPlayer] > 11) $this->places[$this->currentPlayer] = $this->places[$this->currentPlayer] - 12;
-
-				echoln($this->players[$this->currentPlayer]
-						. "'s new location is "
-						.$this->places[$this->currentPlayer]);
+				$this->movePlayer($roll);
 				echoln("The category is " . $this->currentCategory());
 				$this->askQuestion();
 			} else {
@@ -86,12 +81,7 @@ class Game
 
 		} else {
 
-			$this->places[$this->currentPlayer] = $this->places[$this->currentPlayer] + $roll;
-
-			if ($this->places[$this->currentPlayer] > 11) $this->places[$this->currentPlayer] = $this->places[$this->currentPlayer] - 12;
-			echoln($this->players[$this->currentPlayer]
-					. "'s new location is "
-					.$this->places[$this->currentPlayer]);
+			$this->movePlayer($roll);
 			echoln("The category is " . $this->currentCategory());
 			$this->askQuestion();
 		}
@@ -180,5 +170,21 @@ class Game
 	private function didPlayerWin() 
 	{
 		return !($this->purses[$this->currentPlayer] == 6);
+	}
+
+	/**
+	 * Move the current player with dice result
+	 *
+	 * @param int $roll
+	 * @return void
+	 */
+	private function movePlayer(int $roll): void
+	{
+		$this->places[$this->currentPlayer] = $this->places[$this->currentPlayer] + $roll;
+		if ($this->places[$this->currentPlayer] > 11) $this->places[$this->currentPlayer] = $this->places[$this->currentPlayer] - 12;
+
+		echoln($this->players[$this->currentPlayer]
+				. "'s new location is "
+				.$this->places[$this->currentPlayer]);
 	}
 }
