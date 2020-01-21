@@ -85,14 +85,12 @@ class Game
 				echoln($this->players[$this->currentPlayer] . " is not getting out of the penalty box");
 				$this->isGettingOutOfPenaltyBox = false;
 			}
-
-		} else {
-
-			$this->movePlayer($roll);
-			echoln("The category is " . $this->currentCategory());
-			$this->askQuestion();
+			return;
 		}
-
+		
+		$this->movePlayer($roll);
+		echoln("The category is " . $this->currentCategory());
+		$this->askQuestion();
 	}
 
 	private function askQuestion() 
