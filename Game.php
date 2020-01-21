@@ -27,16 +27,23 @@ class Game
 	public function  __construct()
 	{
         for ($i = 0; $i < 50; $i++) {
-			array_push($this->popQuestions, "Pop Question " . $i);
-			array_push($this->scienceQuestions, ("Science Question " . $i));
-			array_push($this->sportsQuestions, ("Sports Question " . $i));
-			array_push($this->rockQuestions, $this->createRockQuestion($i));
+			array_push($this->popQuestions, $this->createQuestion(self::CATEGORY_POP, $i));
+			array_push($this->scienceQuestions, $this->createQuestion(self::CATEGORY_SCIENCE, $i));
+			array_push($this->sportsQuestions, $this->createQuestion(self::CATEGORY_SPORT, $i));
+			array_push($this->rockQuestions, $this->createQuestion(self::CATEGORY_ROCK, $i));
     	}
     }
 
-	private function createRockQuestion($index): string
+	/**
+	 * Create and return question
+	 *
+	 * @param string $type
+	 * @param int $index
+	 * @return string
+	 */
+	private function createQuestion(string $type, int $index): string
 	{
-		return "Rock Question " . $index;
+		return $type . " Question " . $index;
 	}
 
 	private function isPlayable(): boolean
