@@ -2,34 +2,24 @@
 
 namespace App\Contracts;
 
+use App\Contracts\CategoryInterface;
+
 interface QuestionsDeckInterface 
 {
-	const CATEGORY_POP = "Pop";
-	const CATEGORY_SCIENCE = "Science";
-	const CATEGORY_SPORT = "Sports";
-	const CATEGORY_ROCK = "Rock";
-
-	/**
-	 * Build deck with question for categories
-	 *
-	 * @return QuestionsDeckInterface
-	 */
-	public function buildDeck(): QuestionsDeckInterface;
-
 	/**
 	 * Get question from category
 	 *
-	 * @param integer $category
+	 * @param integer $gameZone
 	 * @return string
 	 */
-	public function getQuestionFromCategory(int $category): string;
+	public function getQuestionFromCategory(int $gameZone): string;
 
 	/**
 	 * Get category from his identifier
 	 *
-	 * @param integer $category
-	 * @return string
+	 * @param integer $gameZone
+	 * @return CategoryInterface
 	 */
-	public function getCategory(int $category): string;
+	public function getCategory(int $gameZone): CategoryInterface;
 
 }

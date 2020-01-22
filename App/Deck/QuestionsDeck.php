@@ -3,83 +3,60 @@
 namespace App\Deck;
 
 use App\Contracts\QuestionsDeckInterface;
+use App\Contracts\CategoryInterface;
 
 class QuestionsDeck implements QuestionsDeckInterface
 {
-	private $popQuestions = array();
-    private $scienceQuestions = array();
-    private $sportsQuestions = array();
-    private $rockQuestions = array();
+	private $popQuestions;
+    private $scienceQuestions;
+    private $sportsQuestions;
+    private $rockQuestions;
 
-	/**
-	 * Build deck with question for categories
-	 *
-	 * @return QuestionsDeckInterface
-	 */
-	public function buildDeck(): QuestionsDeckInterface
-	{
-		for ($i = 0; $i < 50; $i++) {
-			array_push($this->popQuestions, $this->createQuestion(QuestionsDeckInterface::CATEGORY_POP, $i));
-			array_push($this->scienceQuestions, $this->createQuestion(QuestionsDeckInterface::CATEGORY_SCIENCE, $i));
-			array_push($this->sportsQuestions, $this->createQuestion(QuestionsDeckInterface::CATEGORY_SPORT, $i));
-			array_push($this->rockQuestions, $this->createQuestion(QuestionsDeckInterface::CATEGORY_ROCK, $i));
-		}
-
-		return $this;
+	public function __construct(
+		Category $popQuestions,
+		Category $scienceQuestions,
+		Category $sportsQuestions,
+		Category $rockQuestions
+	) {
+		$this->popQuestions = $popQuestions;
+		$this->scienceQuestions = $scienceQuestions;
+		$this->sportsQuestions = $sportsQuestions;
+		$this->rockQuestions = $rockQuestions;	
 	}
 
 	/**
-	 * Get question from category
+	 * Get question from game zone's category
 	 *
-	 * @param integer $category
+	 * @param integer $gameZone
 	 * @return string
 	 */
-	public function getQuestionFromCategory(int $category): string
+	public function getQuestionFromCategory(int $gameZone): string
 	{
-		if ($this->getCategory($category) == QuestionsDeckInterface::CATEGORY_POP)
-			return array_shift($this->popQuestions);
-		if ($this->getCategory($category) == QuestionsDeckInterface::CATEGORY_SCIENCE)
-			return array_shift($this->scienceQuestions);
-		if ($this->getCategory($category) == QuestionsDeckInterface::CATEGORY_SPORT)
-			return array_shift($this->sportsQuestions);
-		if ($this->getCategory($category) == QuestionsDeckInterface::CATEGORY_ROCK)
-			return array_shift($this->rockQuestions);
+		return $this->getCategory($gameZone)
+			->drawQuestion();
 	}
 
 	/**
-	 * Get category from his identifier
+	 * Get category from his game zone
 	 *
-	 * @param integer $category
-	 * @return string
+	 * @param integer $gameZone
+	 * @return CategoryInterface
 	 */
-	public function getCategory(int $category): string 
+	public function getCategory(int $gameZone): CategoryInterface
 	{
-		if (in_array($category, [0, 4, 8])) {
-			return self::CATEGORY_POP;
+		if (in_array($gameZone, [0, 4, 8])) {
+			return $this->popQuestions;
 		}
 
-		if (in_array($category, [1, 5, 9])) {
-			return self::CATEGORY_SCIENCE;
+		if (in_array($gameZone, [1, 5, 9])) {
+			return $this->scienceQuestions;
 		}
 
-		if (in_array($category, [2, 6, 10])) {
-			return self::CATEGORY_SPORT;
+		if (in_array($gameZone, [2, 6, 10])) {
+			return $this->sportsQuestions;
 		}
 
-		return self::CATEGORY_ROCK;
+		return $this->rockQuestions;
 	}
-
-	/**
-	 * Create and return question
-	 *
-	 * @param string $type
-	 * @param int $index
-	 * @return string
-	 */
-	private function createQuestion(string $type, int $index): string
-	{
-		return $type . " Question " . $index;
-	}
-
 
 }

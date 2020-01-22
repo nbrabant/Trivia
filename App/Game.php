@@ -28,7 +28,7 @@ class Game
 		QuestionsDeckInterface $questionsDeck,
 		LoggerInterface $logger
 	) { 
-		$this->questionsDeck = $questionsDeck->buildDeck();
+		$this->questionsDeck = $questionsDeck;
 		$this->logger = $logger;
     }
 
