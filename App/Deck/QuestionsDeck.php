@@ -10,7 +10,7 @@ class QuestionsDeck implements QuestionsDeckInterface
 	private $popQuestions;
     private $scienceQuestions;
     private $sportsQuestions;
-    private $rockQuestions;
+	private $rockQuestions;
 
 	public function __construct(
 		Category $popQuestions,

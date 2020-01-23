@@ -3,6 +3,7 @@
 namespace App\Deck;
 
 use App\Contracts\CategoryInterface;
+use App\Deck\Question;
 
 class Category implements CategoryInterface
 {
@@ -11,13 +12,13 @@ class Category implements CategoryInterface
 	 */
 	private $categoryName;
 	/**
-	 * @var array $drawableQuestions
+	 * @var Question[] $drawableQuestions
 	 */
-	private $drawableQuestions = array();
+	private $drawableQuestions = [];
 	/**
-	 * @var array $askedQuestions
+	 * @var Question[] $askedQuestions
 	 */
-	private $askedQuestions = array();
+	private $askedQuestions = [];
 
 	public function __toString() 
 	{
@@ -32,7 +33,7 @@ class Category implements CategoryInterface
 		$this->categoryName = $categoryName;
 		
 		$this->drawableQuestions = array_map(function($index) {
-			return $this->createQuestion($this->categoryName, $index);
+			return new Question($this->categoryName . " Question " . $index);
 		}, range(0, 50));
 	}
 
@@ -50,18 +51,6 @@ class Category implements CategoryInterface
 		$this->askedQuestions[] = $question;
 
 		return $question;
-	}
-
-	/**
-	 * Create and return question
-	 *
-	 * @param string $type
-	 * @param int $index
-	 * @return string
-	 */
-	private function createQuestion(string $type, int $index): string
-	{
-		return $type . " Question " . $index;
 	}
 
 	/**
