@@ -11,9 +11,13 @@ class Category implements CategoryInterface
 	 */
 	private $categoryName;
 	/**
-	 * @var array $questions
+	 * @var array $drawableQuestions
 	 */
-	private $questions = array();
+	private $drawableQuestions = array();
+	/**
+	 * @var array $askedQuestions
+	 */
+	private $askedQuestions = array();
 
 	public function __toString() 
 	{
@@ -28,7 +32,7 @@ class Category implements CategoryInterface
 		$this->categoryName = $categoryName;
 		
 		for ($i = 0; $i < 50; $i++) {
-			array_push($this->questions, $this->createQuestion($this->categoryName, $i));
+			array_push($this->drawableQuestions, $this->createQuestion($this->categoryName, $i));
 		}
 	}
 
@@ -39,7 +43,13 @@ class Category implements CategoryInterface
 	 */
 	public function drawQuestion(): string
 	{
-		return array_shift($this->questions);
+		$this->shuffleQuestionsIfItNeeded();
+
+		$question = array_shift($this->drawableQuestions);
+
+		$this->askedQuestions[] = $question;
+
+		return $question;
 	}
 
 	/**
@@ -54,4 +64,20 @@ class Category implements CategoryInterface
 		return $type . " Question " . $index;
 	}
 
+	/**
+	 * Shuffle asked question in drawable questions
+	 *
+	 * @return void
+	 */
+	private function shuffleQuestionsIfItNeeded()
+	{
+		if (!empty($this->drawableQuestions)) {
+			return;
+		}
+
+		$this->drawableQuestions = $this->askedQuestions;
+		shuffle($this->drawableQuestions);
+
+		$this->askedQuestions = [];
+	}
 }
