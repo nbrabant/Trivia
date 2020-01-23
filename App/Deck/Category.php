@@ -31,9 +31,9 @@ class Category implements CategoryInterface
 	{
 		$this->categoryName = $categoryName;
 		
-		for ($i = 0; $i < 50; $i++) {
-			array_push($this->drawableQuestions, $this->createQuestion($this->categoryName, $i));
-		}
+		$this->drawableQuestions = array_map(function($index) {
+			return $this->createQuestion($this->categoryName, $index);
+		}, range(0, 50));
 	}
 
 	/**
