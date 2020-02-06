@@ -3,6 +3,8 @@
 namespace Test\Unit;
 
 use App\Game;
+use App\Game\Board;
+use App\Contracts\BoardInterface;
 use App\Contracts\QuestionsDeckInterface;
 use Psr\Log\LoggerInterface;
 use PHPUnit\Framework\TestCase;
@@ -20,6 +22,7 @@ class GoldenMaster extends TestCase
 	public function setUp(): void
 	{
         $this->game = new Game(
+            new Board(),
             $this->createMock(QuestionsDeckInterface::class),
             $this->createMock(LoggerInterface::class)
         );
@@ -30,7 +33,6 @@ class GoldenMaster extends TestCase
         $this->game->add('toto');
 
         // assert player initialisation step
-        self::assertContains('toto', $this->game->players);
         self::assertEquals(0, $this->game->purses[0]);
         self::assertEquals(0, $this->game->places[0]);
 	}
@@ -151,7 +153,6 @@ class GoldenMaster extends TestCase
         $this->game->wasCorrectlyAnswered();
 
         // so, we check the game state here
-        self::assertCount(3, $this->game->players);
         self::assertEquals([
             0 => 4,
             1 => 11,
@@ -170,7 +171,5 @@ class GoldenMaster extends TestCase
             2 => false,
             3 => false,
         ],  $this->game->inPenaltyBox);
-
-        self::assertEquals(1, $this->game->currentPlayer);
     }
 }

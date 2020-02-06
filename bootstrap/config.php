@@ -5,12 +5,16 @@ use Psr\Log\LoggerInterface;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use App\Game;
+use App\Contracts\BoardInterface;
 use App\Contracts\QuestionsDeckInterface;
 use App\Contracts\CategoryInterface;
+use App\Game\Board;
 use App\Deck\QuestionsDeck;
 use App\Deck\Category;
 
 return [
+	BoardInterface::class => create(Board::class),
+
 	QuestionsDeckInterface::class => create(QuestionsDeck::class)
 		->constructor(
 			\DI\create(Category::class)->constructor(CategoryInterface::POP),
@@ -23,5 +27,9 @@ return [
         ->constructor('trivia', [new StreamHandler('php://stdout', Logger::DEBUG)]),
 
 	Game::class => create(Game::class)
-        ->constructor(\DI\get(QuestionsDeckInterface::class), \DI\get(LoggerInterface::class)),
+        ->constructor(
+			\DI\get(BoardInterface::class), 
+			\DI\get(QuestionsDeckInterface::class), 
+			\DI\get(LoggerInterface::class)
+		),
 ];

@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Contracts\QuestionsDeckInterface;
+use App\Contracts\BoardInterface;
 use Psr\Log\LoggerInterface;
 
 class Game 
@@ -16,6 +17,10 @@ class Game
 	public $isGettingOutOfPenaltyBox;
 	
 	/**
+	 * @var BoardInterface $board
+	 */
+	private $board;
+	/**
 	 * @var QuestionsDeckInterface $questionsDeck
 	 */
 	private $questionsDeck;
@@ -25,41 +30,41 @@ class Game
 	private $logger;
 
 	public function  __construct(
+		BoardInterface $board,
 		QuestionsDeckInterface $questionsDeck,
 		LoggerInterface $logger
 	) { 
+		$this->board = $board;
+		// FIXME : Question deck may be a composant of the game board...
 		$this->questionsDeck = $questionsDeck;
 		$this->logger = $logger;
     }
 
 	private function isPlayable(): boolean
 	{
-		return ($this->howManyPlayers() >= 2);
+		return ($this->board->howManyPlayers() >= 2);
 	}
 
 	public function add($playerName) 
 	{
-	   	array_push($this->players, $playerName);
-	   	$this->places[$this->howManyPlayers()] = 0;
-	   	$this->purses[$this->howManyPlayers()] = 0;
-	   	$this->inPenaltyBox[$this->howManyPlayers()] = false;
+		$this->board->addNewPlayer($playerName);
+	   	// array_push($this->players, $playerName);
+	   	$this->places[$this->board->howManyPlayers()] = 0;
+	   	$this->purses[$this->board->howManyPlayers()] = 0;
+	   	$this->inPenaltyBox[$this->board->howManyPlayers()] = false;
 
+		// @FIXME : Log may be just event sended...
 	    $this->logger->info($playerName . " was added");
-	    $this->logger->info("They are player number " . count($this->players));
+		$this->logger->info("They are player number " . $this->board->howManyPlayers());
 		return true;
-	}
-
-	private function howManyPlayers() 
-	{
-		return count($this->players);
 	}
 
 	public function roll($roll) 
 	{
-		$this->logger->info($this->players[$this->currentPlayer] . " is the current player");
+		$this->logger->info($this->board->getCurrentPlayer() . " is the current player");
 		$this->logger->info("They have rolled a " . $roll);
 
-		if ($this->inPenaltyBox[$this->currentPlayer] && !$this->tryToGetOutOfPenaltyBox($roll)) {
+		if ($this->inPenaltyBox[$this->board->getCurrentPlayerIndex()] && !$this->tryToGetOutOfPenaltyBox($roll)) {
 			return;
 		}
 
@@ -71,26 +76,26 @@ class Game
 	private function askQuestion() 
 	{
 		$this->logger->info("The category is " . $this->questionsDeck->getCategory(
-			$this->places[$this->currentPlayer]
+			$this->places[$this->board->getCurrentPlayerIndex()]
 		));
 		$this->logger->info(
 			$this->questionsDeck->getQuestionFromCategory(
-				$this->places[$this->currentPlayer]
+				$this->places[$this->board->getCurrentPlayerIndex()]
 			)
 		);
 	}
 
 	public function wasCorrectlyAnswered(): bool
 	{
-		if ($this->inPenaltyBox[$this->currentPlayer] && !$this->isGettingOutOfPenaltyBox) {
-			$this->nextPlayerTurn();
+		if ($this->inPenaltyBox[$this->board->getCurrentPlayerIndex()] && !$this->isGettingOutOfPenaltyBox) {
+			$this->board->nextPlayerTurn();
 			return false;
 		}
 
 		$this->giveCoinToPlayer();
 
 		$winner = $this->didPlayerWin();
-		$this->nextPlayerTurn();
+		$this->board->nextPlayerTurn();
 
 		return $winner;
 	}
@@ -98,22 +103,11 @@ class Game
 	public function wrongAnswer(): bool
 	{
 		$this->logger->info("Question was incorrectly answered");
-		$this->logger->info($this->players[$this->currentPlayer] . " was sent to the penalty box");
-		$this->inPenaltyBox[$this->currentPlayer] = true;
+		$this->logger->info($this->board->getCurrentPlayer() . " was sent to the penalty box");
+		$this->inPenaltyBox[$this->board->getCurrentPlayerIndex()] = true;
 
-		$this->nextPlayerTurn();
+		$this->board->nextPlayerTurn();
 		return false;
-	}
-
-	/**
-	 * Next player turn
-	 *
-	 * @return void
-	 */
-	private function nextPlayerTurn(): void
-	{
-		$this->currentPlayer++;
-		if ($this->currentPlayer == count($this->players)) $this->currentPlayer = 0;
 	}
 
 	/**
@@ -123,7 +117,7 @@ class Game
 	 */
 	private function didPlayerWin(): bool
 	{
-		return ($this->purses[$this->currentPlayer] >= 6);
+		return ($this->purses[$this->board->getCurrentPlayerIndex()] >= 6);
 	}
 
 	/**
@@ -134,12 +128,12 @@ class Game
 	 */
 	private function movePlayer(int $roll): void
 	{
-		$this->places[$this->currentPlayer] = $this->places[$this->currentPlayer] + $roll;
-		if ($this->places[$this->currentPlayer] > 11) $this->places[$this->currentPlayer] = $this->places[$this->currentPlayer] - 12;
+		$this->places[$this->board->getCurrentPlayerIndex()] = $this->places[$this->board->getCurrentPlayerIndex()] + $roll;
+		if ($this->places[$this->board->getCurrentPlayerIndex()] > 11) $this->places[$this->board->getCurrentPlayerIndex()] = $this->places[$this->board->getCurrentPlayerIndex()] - 12;
 
-		$this->logger->info($this->players[$this->currentPlayer]
-				. "'s new location is "
-				.$this->places[$this->currentPlayer]);
+		$this->logger->info($this->board->getCurrentPlayer() . 
+			"'s new location is " . 
+			$this->places[$this->board->getCurrentPlayerIndex()]);
 	}
 
 	/**
@@ -152,12 +146,12 @@ class Game
 	{
 		if ($roll % 2 != 0) {
 			$this->isGettingOutOfPenaltyBox = true;
-			$this->logger->info($this->players[$this->currentPlayer] . " is getting out of the penalty box");
+			$this->logger->info($this->board->getCurrentPlayer() . " is getting out of the penalty box");
 			return true;
 		}
 		
 		$this->isGettingOutOfPenaltyBox = false;
-		$this->logger->info($this->players[$this->currentPlayer] . " is not getting out of the penalty box");
+		$this->logger->info($this->board->getCurrentPlayer() . " is not getting out of the penalty box");
 		return false;
 	}
 
@@ -169,10 +163,10 @@ class Game
 	private function giveCoinToPlayer(): void
 	{
 		$this->logger->info("Answer was correct!!!!");
-		$this->purses[$this->currentPlayer]++;
-		$this->logger->info($this->players[$this->currentPlayer]
+		$this->purses[$this->board->getCurrentPlayerIndex()]++;
+		$this->logger->info($this->board->getCurrentPlayer()
 				. " now has "
-				.$this->purses[$this->currentPlayer]
+				.$this->purses[$this->board->getCurrentPlayerIndex()]
 				. " Gold Coins.");
 	}
 }
