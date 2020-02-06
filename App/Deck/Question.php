@@ -6,6 +6,9 @@ use App\Contracts\QuestionInterface;
 
 class Question implements QuestionInterface
 {
+	/**
+	 * @var string $question
+	 */
 	private $question;
 
 	public function __toString() 

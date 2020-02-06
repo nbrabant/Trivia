@@ -2,6 +2,8 @@
 
 namespace App\Contracts;
 
+use App\Contracts\PlayerInterface;
+
 interface BoardInterface
 {
 	/**
@@ -31,9 +33,9 @@ interface BoardInterface
 	/**
 	 * Return current player
 	 *
-	 * @return string
+	 * @return PlayerInterface
 	 */
-	public function getCurrentPlayer(): string;
+	public function getCurrentPlayer(): PlayerInterface;
 
 	/**
 	 * Pass turn to next player

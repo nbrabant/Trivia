@@ -4,6 +4,7 @@ namespace Test\Unit;
 
 use App\Game;
 use App\Game\Board;
+use App\Game\Player;
 use App\Contracts\BoardInterface;
 use App\Contracts\QuestionsDeckInterface;
 use Psr\Log\LoggerInterface;
@@ -22,7 +23,9 @@ class GoldenMaster extends TestCase
 	public function setUp(): void
 	{
         $this->game = new Game(
-            new Board(),
+            new Board(
+                new Player()
+            ),
             $this->createMock(QuestionsDeckInterface::class),
             $this->createMock(LoggerInterface::class)
         );

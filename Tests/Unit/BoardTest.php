@@ -3,6 +3,7 @@
 namespace Test\Unit;
 
 use App\Game\Board;
+use App\Game\Player;
 use PHPUnit\Framework\TestCase;
 use App\Contracts\BoardInterface;
 
@@ -15,7 +16,9 @@ class BoardTest extends TestCase
 
 	public function setUp(): void
 	{
-		$this->board = new Board();
+		$this->board = new Board(
+			new Player()
+		);
 	}
 
 	public function testShouldHaveCorrectCountOfPlayerWhenAddPlayer()
@@ -37,6 +40,6 @@ class BoardTest extends TestCase
 		$this->board->nextPlayerTurn();
 		$this->board->nextPlayerTurn();
 
-		self::assertEquals('Pat', $this->board->getCurrentPlayer());
+		self::assertEquals('Pat', (string)$this->board->getCurrentPlayer());
 	}
 }

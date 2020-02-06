@@ -3,17 +3,27 @@
 namespace App\Game;
 
 use App\Contracts\BoardInterface;
+use App\Contracts\PlayerInterface;
 
 class Board implements BoardInterface
 {
+	/**
+	 * @var PlayerInterface $playerFactory
+	 */
+	private $playerFactory;
 	/**
 	 * @var integer $currentPlayer
 	 */
 	private $currentPlayer = 0;
 	/**
-	 * @var string $player
+	 * @var Player[] $player
 	 */
 	private $players = [];
+
+	public function __construct(PlayerInterface $playerFactory) 
+	{
+		$this->playerFactory = $playerFactory;
+	}
 
 	/**
 	 * Initialize and add new player to the board
@@ -24,7 +34,7 @@ class Board implements BoardInterface
 	 */
 	public function addNewPlayer(string $playerName): void
 	{
-		array_push($this->players, $playerName);
+		array_push($this->players, $this->playerFactory->initialize($playerName));
 
 		// @FIXME : send player add event here...
 	}
@@ -52,9 +62,9 @@ class Board implements BoardInterface
 	/**
 	 * Return current player
 	 *
-	 * @return string
+	 * @return PlayerInterface
 	 */
-	public function getCurrentPlayer(): string
+	public function getCurrentPlayer(): PlayerInterface
 	{
 		return $this->players[$this->currentPlayer];
 	}

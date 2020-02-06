@@ -5,15 +5,20 @@ use Psr\Log\LoggerInterface;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use App\Game;
+use App\Contracts\PlayerInterface;
 use App\Contracts\BoardInterface;
 use App\Contracts\QuestionsDeckInterface;
 use App\Contracts\CategoryInterface;
 use App\Game\Board;
+use App\Game\Player;
 use App\Deck\QuestionsDeck;
 use App\Deck\Category;
 
 return [
-	BoardInterface::class => create(Board::class),
+	BoardInterface::class => create(Board::class)
+		->constructor(
+			\DI\create(Player::class)
+		),
 
 	QuestionsDeckInterface::class => create(QuestionsDeck::class)
 		->constructor(
