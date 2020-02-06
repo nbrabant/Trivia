@@ -10,6 +10,10 @@ class Player implements PlayerInterface
 	 * @var string $name
 	 */
 	private $name;
+	/**
+	 * @var integer $coins
+	 */
+	private $coins = 0;
 
 	public function __toString()
 	{
@@ -31,5 +35,27 @@ class Player implements PlayerInterface
 	public function initialize(string $name): PlayerInterface
 	{
 		return new self($name);
+	}
+
+	/**
+	 * Toss a coin to the player
+	 * 
+	 * @return void
+	 */
+	public function earnACoin(): void
+	{
+		$this->coins++;
+
+		//@FIXME : emit that the current player win here
+	}
+
+	/**
+	 * Return how many coins player have
+	 *
+	 * @return int
+	 */
+	public function howManyCoins(): int
+	{
+		return $this->coins;
 	}
 }

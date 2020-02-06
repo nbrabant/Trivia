@@ -8,12 +8,9 @@ use Psr\Log\LoggerInterface;
 
 class Game 
 {
-	public $players = array();
     public $places = array(0);
-    public $purses = array(0);
     public $inPenaltyBox = array(0);
 
-    public $currentPlayer = 0;
 	public $isGettingOutOfPenaltyBox;
 	
 	/**
@@ -48,9 +45,7 @@ class Game
 	public function add($playerName) 
 	{
 		$this->board->addNewPlayer($playerName);
-	   	// array_push($this->players, $playerName);
 	   	$this->places[$this->board->howManyPlayers()] = 0;
-	   	$this->purses[$this->board->howManyPlayers()] = 0;
 	   	$this->inPenaltyBox[$this->board->howManyPlayers()] = false;
 
 		// @FIXME : Log may be just event sended...
@@ -117,7 +112,7 @@ class Game
 	 */
 	private function didPlayerWin(): bool
 	{
-		return ($this->purses[$this->board->getCurrentPlayerIndex()] >= 6);
+		return ($this->board->getCurrentPlayer()->howManyCoins() >= 6);
 	}
 
 	/**
@@ -163,10 +158,21 @@ class Game
 	private function giveCoinToPlayer(): void
 	{
 		$this->logger->info("Answer was correct!!!!");
-		$this->purses[$this->board->getCurrentPlayerIndex()]++;
+		$this->board->getCurrentPlayer()->earnACoin();
 		$this->logger->info($this->board->getCurrentPlayer()
 				. " now has "
-				.$this->purses[$this->board->getCurrentPlayerIndex()]
+				. $this->board->getCurrentPlayer()->howManyCoins()
 				. " Gold Coins.");
+	}
+
+	/**
+	 * Get the board
+	 * @deprecated usage only for testing
+	 *
+	 * @return BoardInterface
+	 */
+	public function getBoard(): BoardInterface
+	{
+		return $this->board;
 	}
 }

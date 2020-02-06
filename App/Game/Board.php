@@ -83,7 +83,4 @@ class Board implements BoardInterface
 		}
 	}
 
-
-
-
 }

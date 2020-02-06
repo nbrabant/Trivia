@@ -36,7 +36,6 @@ class GoldenMaster extends TestCase
         $this->game->add('toto');
 
         // assert player initialisation step
-        self::assertEquals(0, $this->game->purses[0]);
         self::assertEquals(0, $this->game->places[0]);
 	}
 	
@@ -82,7 +81,7 @@ class GoldenMaster extends TestCase
         $this->game->roll(6);
         $this->game->wasCorrectlyAnswered();
 
-        self::assertEquals(0, $this->game->purses[0]);
+        self::assertEquals(0, $this->game->getBoard()->getCurrentPlayer()->howManyCoins());
     }
 
     public function testShouldEarnPointWhenOutOfPenaltyPlayerHasCorrectlyAnswered()
@@ -92,7 +91,7 @@ class GoldenMaster extends TestCase
         $this->game->roll(5);
         $this->game->wasCorrectlyAnswered();
 
-        self::assertEquals(1, $this->game->purses[0]);
+        self::assertEquals(1, $this->game->getBoard()->getCurrentPlayer()->howManyCoins());
     }
 
     public function testShouldNotWinTheGameForACorrectAnswerWhenPlayerHasNotEnoughtPoints()
@@ -106,7 +105,11 @@ class GoldenMaster extends TestCase
     public function testShouldWinTheGameForACorrectAnswerWhenPlayerHasEnoughPoints()
     {
         $this->game->add('toto');
-        $this->game->purses[0] = 5;
+        $this->game->getBoard()->getCurrentPlayer()->earnACoin();
+        $this->game->getBoard()->getCurrentPlayer()->earnACoin();
+        $this->game->getBoard()->getCurrentPlayer()->earnACoin();
+        $this->game->getBoard()->getCurrentPlayer()->earnACoin();
+        $this->game->getBoard()->getCurrentPlayer()->earnACoin();
         $this->game->roll(5);
 
         self::assertTrue($this->game->wasCorrectlyAnswered());
@@ -162,12 +165,6 @@ class GoldenMaster extends TestCase
             2 => 7,
             3 => 0,
         ],  $this->game->places);
-        self::assertEquals([
-            0 => 1,
-            1 => 1,
-            2 => 2,
-            3 => 0,
-        ],  $this->game->purses);
         self::assertEquals([
             0 => true,
             1 => true,
