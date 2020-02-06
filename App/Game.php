@@ -8,7 +8,6 @@ use Psr\Log\LoggerInterface;
 
 class Game 
 {
-    public $places = array(0);
     public $inPenaltyBox = array(0);
 
 	public $isGettingOutOfPenaltyBox;
@@ -45,7 +44,6 @@ class Game
 	public function add($playerName) 
 	{
 		$this->board->addNewPlayer($playerName);
-	   	$this->places[$this->board->howManyPlayers()] = 0;
 	   	$this->inPenaltyBox[$this->board->howManyPlayers()] = false;
 
 		// @FIXME : Log may be just event sended...
@@ -71,11 +69,11 @@ class Game
 	private function askQuestion() 
 	{
 		$this->logger->info("The category is " . $this->questionsDeck->getCategory(
-			$this->places[$this->board->getCurrentPlayerIndex()]
+			$this->board->getCurrentPlayer()->getCurrentPlace()
 		));
 		$this->logger->info(
 			$this->questionsDeck->getQuestionFromCategory(
-				$this->places[$this->board->getCurrentPlayerIndex()]
+				$this->board->getCurrentPlayer()->getCurrentPlace()
 			)
 		);
 	}
@@ -123,12 +121,11 @@ class Game
 	 */
 	private function movePlayer(int $roll): void
 	{
-		$this->places[$this->board->getCurrentPlayerIndex()] = $this->places[$this->board->getCurrentPlayerIndex()] + $roll;
-		if ($this->places[$this->board->getCurrentPlayerIndex()] > 11) $this->places[$this->board->getCurrentPlayerIndex()] = $this->places[$this->board->getCurrentPlayerIndex()] - 12;
+		$this->board->getCurrentPlayer()->move($roll);
 
 		$this->logger->info($this->board->getCurrentPlayer() . 
 			"'s new location is " . 
-			$this->places[$this->board->getCurrentPlayerIndex()]);
+			$this->board->getCurrentPlayer()->getCurrentPlace());
 	}
 
 	/**

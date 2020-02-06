@@ -36,7 +36,8 @@ class GoldenMaster extends TestCase
         $this->game->add('toto');
 
         // assert player initialisation step
-        self::assertEquals(0, $this->game->places[0]);
+        self::assertEquals(0, $this->game->getBoard()->getCurrentPlayer()->howManyCoins());
+        self::assertEquals(0, $this->game->getBoard()->getCurrentPlayer()->getCurrentPlace());
 	}
 	
 	public function testShouldPlaceActivePlayerToFiveWhenAFiveIsRolledOnDice()
@@ -44,7 +45,7 @@ class GoldenMaster extends TestCase
         $this->game->add('toto');
         $this->game->roll(5);
 
-        self::assertEquals(5, $this->game->places[0]);
+        self::assertEquals(5, $this->game->getBoard()->getCurrentPlayer()->getCurrentPlace());
 	}
 	
 
@@ -53,7 +54,7 @@ class GoldenMaster extends TestCase
         $this->game->add('toto');
         $this->game->roll(12);
 
-        self::assertEquals(0, $this->game->places[0]);
+        self::assertEquals(0, $this->game->getBoard()->getCurrentPlayer()->getCurrentPlace());
     }
 
     public function testKeepInPenaltyBoxAPenalizedPlayerWhenPairIsRolled()
@@ -159,12 +160,6 @@ class GoldenMaster extends TestCase
         $this->game->wasCorrectlyAnswered();
 
         // so, we check the game state here
-        self::assertEquals([
-            0 => 4,
-            1 => 11,
-            2 => 7,
-            3 => 0,
-        ],  $this->game->places);
         self::assertEquals([
             0 => true,
             1 => true,

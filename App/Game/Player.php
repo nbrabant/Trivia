@@ -14,6 +14,10 @@ class Player implements PlayerInterface
 	 * @var integer $coins
 	 */
 	private $coins = 0;
+	/**
+	 * @var integer $place
+	 */
+	private $place = 0;
 
 	public function __toString()
 	{
@@ -57,5 +61,31 @@ class Player implements PlayerInterface
 	public function howManyCoins(): int
 	{
 		return $this->coins;
+	}
+
+	/**
+	 * Move the player to his next place
+	 *
+	 * @param int $rolldice
+	 * 
+	 * @return void
+	 */
+	public function move(int $rolldice): void
+	{
+		$this->place = $this->place + $rolldice;
+
+		if ($this->place > 11) {
+			$this->place = $this->place - 12;
+		}
+	}
+
+	/**
+	 * Get the current place of the player
+	 *
+	 * @return integer
+	 */
+	public function getCurrentPlace(): int
+	{
+		return $this->place;
 	}
 }

@@ -28,4 +28,20 @@ interface PlayerInterface
 	 * @return int
 	 */
 	public function howManyCoins(): int;
+
+	/**
+	 * Move the player to his next place
+	 *
+	 * @param int $rolldice
+	 * 
+	 * @return void
+	 */
+	public function move(int $rolldice): void;
+
+	/**
+	 * Get the current place of the player
+	 *
+	 * @return integer
+	 */
+	public function getCurrentPlace(): int;
 }
