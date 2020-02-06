@@ -44,4 +44,18 @@ interface PlayerInterface
 	 * @return integer
 	 */
 	public function getCurrentPlace(): int;
+
+	/**
+	 * Move the player in penalty box
+	 *
+	 * @return void
+	 */
+	public function goToPenaltyBox(): void;
+
+	/**
+	 * Check if player is in penalty box
+	 *
+	 * @return boolean
+	 */
+	public function isInPenaltyBox(): bool;
 }

@@ -18,6 +18,10 @@ class Player implements PlayerInterface
 	 * @var integer $place
 	 */
 	private $place = 0;
+	/**
+	 * @var boolean $inPenaltyBox
+	 */
+	private $inPenaltyBox = false;
 
 	public function __toString()
 	{
@@ -87,5 +91,25 @@ class Player implements PlayerInterface
 	public function getCurrentPlace(): int
 	{
 		return $this->place;
+	}
+
+	/**
+	 * Move the player in penalty box
+	 *
+	 * @return void
+	 */
+	public function goToPenaltyBox(): void
+	{
+		$this->inPenaltyBox = true;
+	}
+
+	/**
+	 * Check if player is in penalty box
+	 *
+	 * @return boolean
+	 */
+	public function isInPenaltyBox(): bool
+	{
+		return $this->inPenaltyBox;
 	}
 }

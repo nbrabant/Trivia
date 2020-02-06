@@ -8,8 +8,6 @@ use Psr\Log\LoggerInterface;
 
 class Game 
 {
-    public $inPenaltyBox = array(0);
-
 	public $isGettingOutOfPenaltyBox;
 	
 	/**
@@ -44,7 +42,6 @@ class Game
 	public function add($playerName) 
 	{
 		$this->board->addNewPlayer($playerName);
-	   	$this->inPenaltyBox[$this->board->howManyPlayers()] = false;
 
 		// @FIXME : Log may be just event sended...
 	    $this->logger->info($playerName . " was added");
@@ -57,7 +54,7 @@ class Game
 		$this->logger->info($this->board->getCurrentPlayer() . " is the current player");
 		$this->logger->info("They have rolled a " . $roll);
 
-		if ($this->inPenaltyBox[$this->board->getCurrentPlayerIndex()] && !$this->tryToGetOutOfPenaltyBox($roll)) {
+		if ($this->board->getCurrentPlayer()->isInPenaltyBox() && !$this->tryToGetOutOfPenaltyBox($roll)) {
 			return;
 		}
 
@@ -80,7 +77,7 @@ class Game
 
 	public function wasCorrectlyAnswered(): bool
 	{
-		if ($this->inPenaltyBox[$this->board->getCurrentPlayerIndex()] && !$this->isGettingOutOfPenaltyBox) {
+		if ($this->board->getCurrentPlayer()->isInPenaltyBox() && !$this->isGettingOutOfPenaltyBox) {
 			$this->board->nextPlayerTurn();
 			return false;
 		}
@@ -97,7 +94,7 @@ class Game
 	{
 		$this->logger->info("Question was incorrectly answered");
 		$this->logger->info($this->board->getCurrentPlayer() . " was sent to the penalty box");
-		$this->inPenaltyBox[$this->board->getCurrentPlayerIndex()] = true;
+		$this->board->getCurrentPlayer()->goToPenaltyBox();
 
 		$this->board->nextPlayerTurn();
 		return false;
